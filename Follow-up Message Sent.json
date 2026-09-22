@@ -1,0 +1,1050 @@
+{
+  "name": "Follow-up Message Sent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        256
+      ],
+      "id": "d8b42311-f6c7-4a9e-b440-854bcd0dea56",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY",
+          "mode": "list",
+          "cachedResultName": "Followup_Message All Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Stage",
+              "lookupValue": "0"
+            },
+            {
+              "lookupColumn": "Stage",
+              "lookupValue": "1"
+            },
+            {
+              "lookupColumn": "Stage",
+              "lookupValue": "2"
+            }
+          ]
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -32,
+        256
+      ],
+      "id": "64cce2b8-8304-4fe8-be99-5512ee25f26a",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G216BVtIHqbw2xZj",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Stage }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "049d714a-9e09-443d-956a-597168b27925"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "044e1dfc-c101-4ab7-8c3b-7d0495e1adb6",
+                    "leftValue": "={{ $json.Stage }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "603bad8a-187f-4c8c-ad86-1ad4ec639b2b",
+                    "leftValue": "={{ $json.Stage }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        240
+      ],
+      "id": "8986e6aa-f4a2-46d9-82e0-1ef83a265eb2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\n\n// ===== ROW VALUES =====\nconst rawFrom = String($json.From || \"\");\nconst rawTo = String($json.To || \"\");\nconst STAGE = $json.Stage ?? \"0\";\nconst SHEET_NAME = $json.Sheet_Name ?? \"\";\nconst ORIGINAL_BODY = String($json.Message_Body || \"\");\nconst ORIGINAL_TIME = $json.Time_To_Sent || \"\";\nconst ROW_NUMBER = $json.row_number ?? \"\";\n\n// ===== FORMAT NUMBERS =====\nconst FROM_NUMBER = '+' + rawFrom.replace(/\\D/g, '');\nconst TO_NUMBER = '+' + rawTo.replace(/\\D/g, '');\n\n// ===== FOLLOW-UP MESSAGE =====\nconst MESSAGE_BODY = `Just checking back regarding the property. Let me know if selling is something you'd consider.`;\n\n// ===== NEW TIME =====\nconst TIME_TO_SENT = new Date().toISOString();\n\n// ===== TWILIO =====\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\ntry {\n  const body =\n    `To=${encodeURIComponent(TO_NUMBER)}` +\n    `&From=${encodeURIComponent(FROM_NUMBER)}` +\n    `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n  const response = await this.helpers.httpRequest({\n    method: 'POST',\n    url,\n    headers: {\n      Authorization: `Basic ${authHeader}`,\n      'Content-Type': 'application/x-www-form-urlencoded',\n    },\n    body,\n  });\n\n  return [{\n    json: {\n      status: 'SENT',\n      sid: response.sid,\n      From: rawFrom,\n      To: rawTo,\n      Time_To_Sent: TIME_TO_SENT,\n      Message_Body: MESSAGE_BODY,\n      Old_Message_Body: ORIGINAL_BODY,\n      Old_Time_To_Sent: ORIGINAL_TIME,\n      Stage: \"1\",\n      Sheet_Name: SHEET_NAME,\n      row_number: ROW_NUMBER\n    }\n  }];\n\n} catch (err) {\n  return [{\n    json: {\n      status: 'FAILED',\n      error: err?.response?.body || err.message,\n      From: rawFrom,\n      To: rawTo,\n      Time_To_Sent: TIME_TO_SENT,\n      Message_Body: MESSAGE_BODY,\n      Old_Message_Body: ORIGINAL_BODY,\n      Old_Time_To_Sent: ORIGINAL_TIME,\n      Stage: STAGE,\n      Sheet_Name: SHEET_NAME,\n      row_number: ROW_NUMBER\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        -352
+      ],
+      "id": "cf814fdb-67a5-4d06-bc63-88fed35261fa",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY",
+          "mode": "list",
+          "cachedResultName": "Followup_Message All Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Stage": "1",
+            "Message_Body": "={{ $json.Message_Body }}",
+            "row_number": "={{ $json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "From",
+              "displayName": "From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "To",
+              "displayName": "To",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Time_To_Sent",
+              "displayName": "Time_To_Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message_Body",
+              "displayName": "Message_Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stage",
+              "displayName": "Stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sheet_Name",
+              "displayName": "Sheet_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1312,
+        -288
+      ],
+      "id": "5ca6f598-d480-466b-9e9d-d10b09df92dd",
+      "name": "Update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G216BVtIHqbw2xZj",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.first().json;\n\nconst timeString = row.Time_To_Sent;\nconst sentTimeMs = new Date(timeString).getTime();\nconst nowMs = Date.now();\nconst threeDaysMs = 3 * 24 * 60 * 60 * 1000;\n\nconst isOlderThanThreeDays = (nowMs - sentTimeMs) >= threeDaysMs;\n\nreturn [\n  {\n    json: {\n      ...row,\n      original_time: timeString,\n      sent_unix_timestamp: sentTimeMs,\n      current_unix_timestamp: nowMs,\n      difference_ms: nowMs - sentTimeMs,\n      is_three_days_old_or_more: isOlderThanThreeDays\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        -96
+      ],
+      "id": "324ccd84-4860-455a-9216-88d96878047d",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        416,
+        -144
+      ],
+      "id": "2d074971-e4a9-4cb4-af6e-364e12b9625c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "94396500-224c-4b4c-86d7-dd8701d1fd8b",
+              "leftValue": "={{ $json.is_three_days_old_or_more }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        640,
+        -288
+      ],
+      "id": "33a1fe22-0b89-4a62-af89-93dcfee3b4b3",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        864,
+        -288
+      ],
+      "id": "ab817b6d-1224-43a2-8df4-1dd568551550",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\n\n// ===== ROW VALUES =====\nconst rawFrom = String($json.From || \"\");\nconst rawTo = String($json.To || \"\");\nconst STAGE = $json.Stage ?? \"0\";\nconst SHEET_NAME = $json.Sheet_Name ?? \"\";\nconst ORIGINAL_BODY = String($json.Message_Body || \"\");\nconst ORIGINAL_TIME = $json.Time_To_Sent || \"\";\nconst ROW_NUMBER = $json.row_number ?? \"\";\n\n// ===== FORMAT NUMBERS =====\nconst FROM_NUMBER = '+' + rawFrom.replace(/\\D/g, '');\nconst TO_NUMBER = '+' + rawTo.replace(/\\D/g, '');\n\n// ===== FOLLOW-UP MESSAGE =====\nconst MESSAGE_BODY = `Following up again about the property. If you'd be open to discussing an offer, I'd be happy to talk.`;\n\n// ===== NEW TIME =====\nconst TIME_TO_SENT = new Date().toISOString();\n\n// ===== TWILIO =====\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\ntry {\n  const body =\n    `To=${encodeURIComponent(TO_NUMBER)}` +\n    `&From=${encodeURIComponent(FROM_NUMBER)}` +\n    `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n  const response = await this.helpers.httpRequest({\n    method: 'POST',\n    url,\n    headers: {\n      Authorization: `Basic ${authHeader}`,\n      'Content-Type': 'application/x-www-form-urlencoded',\n    },\n    body,\n  });\n\n  return [{\n    json: {\n      status: 'SENT',\n      sid: response.sid,\n      From: rawFrom,\n      To: rawTo,\n      Time_To_Sent: TIME_TO_SENT,\n      Message_Body: MESSAGE_BODY,\n      Old_Message_Body: ORIGINAL_BODY,\n      Old_Time_To_Sent: ORIGINAL_TIME,\n      Stage: \"1\",\n      Sheet_Name: SHEET_NAME,\n      row_number: ROW_NUMBER\n    }\n  }];\n\n} catch (err) {\n  return [{\n    json: {\n      status: 'FAILED',\n      error: err?.response?.body || err.message,\n      From: rawFrom,\n      To: rawTo,\n      Time_To_Sent: TIME_TO_SENT,\n      Message_Body: MESSAGE_BODY,\n      Old_Message_Body: ORIGINAL_BODY,\n      Old_Time_To_Sent: ORIGINAL_TIME,\n      Stage: STAGE,\n      Sheet_Name: SHEET_NAME,\n      row_number: ROW_NUMBER\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        -16
+      ],
+      "id": "1112037a-d5e2-4c6c-8b1d-78ca62973429",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY",
+          "mode": "list",
+          "cachedResultName": "Followup_Message All Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $json.row_number }}",
+            "Message_Body": "={{ $json.Message_Body }}",
+            "Stage": "2"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "From",
+              "displayName": "From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "To",
+              "displayName": "To",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Time_To_Sent",
+              "displayName": "Time_To_Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message_Body",
+              "displayName": "Message_Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stage",
+              "displayName": "Stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sheet_Name",
+              "displayName": "Sheet_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1312,
+        112
+      ],
+      "id": "9a539ac3-a4e8-44bc-9adc-3b283dc86af0",
+      "name": "Update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G216BVtIHqbw2xZj",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.first().json;\n\nconst timeString = row.Time_To_Sent;\nconst sentTimeMs = new Date(timeString).getTime();\nconst nowMs = Date.now();\nconst sevenDaysMs = 7 * 24 * 60 * 60 * 1000;\n\nconst isOlderThanSevenDays = (nowMs - sentTimeMs) >= sevenDaysMs;\n\nreturn [\n  {\n    json: {\n      ...row,\n      original_time: timeString,\n      sent_unix_timestamp: sentTimeMs,\n      current_unix_timestamp: nowMs,\n      difference_ms: nowMs - sentTimeMs,\n      is_seven_days_old_or_more: isOlderThanSevenDays\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        304
+      ],
+      "id": "2245a28e-6071-4495-baa8-0feddce18058",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        416,
+        256
+      ],
+      "id": "45cd0723-baaf-4e8e-bf1a-2eb362762843",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "94396500-224c-4b4c-86d7-dd8701d1fd8b",
+              "leftValue": "={{ $json.is_seven_days_old_or_more }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        640,
+        112
+      ],
+      "id": "58859c5f-9e66-42e9-ab03-dfe62b21cba9",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        864,
+        112
+      ],
+      "id": "d57b1daf-2abf-49fa-9f52-8e4e07f23d2e",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\n\n// ===== ROW VALUES =====\nconst rawFrom = String($json.From || \"\");\nconst rawTo = String($json.To || \"\");\nconst STAGE = $json.Stage ?? \"0\";\nconst SHEET_NAME = $json.Sheet_Name ?? \"\";\nconst ORIGINAL_BODY = String($json.Message_Body || \"\");\nconst ORIGINAL_TIME = $json.Time_To_Sent || \"\";\nconst ROW_NUMBER = $json.row_number ?? \"\";\n\n// ===== FORMAT NUMBERS =====\nconst FROM_NUMBER = '+' + rawFrom.replace(/\\D/g, '');\nconst TO_NUMBER = '+' + rawTo.replace(/\\D/g, '');\n\n// ===== FOLLOW-UP MESSAGE =====\nconst MESSAGE_BODY = `Just reaching out one last time about the property. If selling is something you'd consider, feel free to let me know.`;\n\n// ===== NEW TIME =====\nconst TIME_TO_SENT = new Date().toISOString();\n\n// ===== TWILIO =====\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\ntry {\n  const body =\n    `To=${encodeURIComponent(TO_NUMBER)}` +\n    `&From=${encodeURIComponent(FROM_NUMBER)}` +\n    `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n  const response = await this.helpers.httpRequest({\n    method: 'POST',\n    url,\n    headers: {\n      Authorization: `Basic ${authHeader}`,\n      'Content-Type': 'application/x-www-form-urlencoded',\n    },\n    body,\n  });\n\n  return [{\n    json: {\n      status: 'SENT',\n      sid: response.sid,\n      From: rawFrom,\n      To: rawTo,\n      Time_To_Sent: TIME_TO_SENT,\n      Message_Body: MESSAGE_BODY,\n      Old_Message_Body: ORIGINAL_BODY,\n      Old_Time_To_Sent: ORIGINAL_TIME,\n      Stage: \"1\",\n      Sheet_Name: SHEET_NAME,\n      row_number: ROW_NUMBER\n    }\n  }];\n\n} catch (err) {\n  return [{\n    json: {\n      status: 'FAILED',\n      error: err?.response?.body || err.message,\n      From: rawFrom,\n      To: rawTo,\n      Time_To_Sent: TIME_TO_SENT,\n      Message_Body: MESSAGE_BODY,\n      Old_Message_Body: ORIGINAL_BODY,\n      Old_Time_To_Sent: ORIGINAL_TIME,\n      Stage: STAGE,\n      Sheet_Name: SHEET_NAME,\n      row_number: ROW_NUMBER\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        368
+      ],
+      "id": "48079464-e8d4-4723-b3a8-a1fbc36b198d",
+      "name": "Code in JavaScript6"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY",
+          "mode": "list",
+          "cachedResultName": "Followup_Message All Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IF_cnHDGvR2c_IZD46r1YkNbn30yIIOjhEVWXL5c4JY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $json.row_number }}",
+            "Message_Body": "={{ $json.Message_Body }}",
+            "Stage": "3"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "From",
+              "displayName": "From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "To",
+              "displayName": "To",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Time_To_Sent",
+              "displayName": "Time_To_Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message_Body",
+              "displayName": "Message_Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stage",
+              "displayName": "Stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sheet_Name",
+              "displayName": "Sheet_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1312,
+        496
+      ],
+      "id": "a7b087b1-a81e-423a-8032-d178553d00c3",
+      "name": "Update row in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G216BVtIHqbw2xZj",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.first().json;\n\nconst timeString = row.Time_To_Sent;\nconst sentTimeMs = new Date(timeString).getTime();\nconst nowMs = Date.now();\nconst fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;\n\nconst isOlderThanFourteenDays = (nowMs - sentTimeMs) >= fourteenDaysMs;\n\nreturn [\n  {\n    json: {\n      ...row,\n      original_time: timeString,\n      sent_unix_timestamp: sentTimeMs,\n      current_unix_timestamp: nowMs,\n      difference_ms: nowMs - sentTimeMs,\n      is_fourteen_days_old_or_more: isOlderThanFourteenDays\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        688
+      ],
+      "id": "67bf3302-f62a-4f0c-9841-2c336b363123",
+      "name": "Code in JavaScript7"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        416,
+        640
+      ],
+      "id": "3751113f-ea25-4ac2-ac09-5d7b944ed8da",
+      "name": "Loop Over Items4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "94396500-224c-4b4c-86d7-dd8701d1fd8b",
+              "leftValue": "={{ $json.is_fourteen_days_old_or_more }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        640,
+        496
+      ],
+      "id": "0c898ebe-51a7-401c-9ff4-9fbcec63d53a",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        864,
+        496
+      ],
+      "id": "457ff256-45af-4076-9ea8-fc1029cf359b",
+      "name": "Loop Over Items5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript7": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items4": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items5": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "28ca8d42-a625-4fa1-ae41-ac3505aa7ea3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e74733951e6351301a22671ce11a8f247318f3433d749386dda511e283946c74"
+  },
+  "id": "ABLOP6lq6aQM1bbM",
+  "tags": []
+}

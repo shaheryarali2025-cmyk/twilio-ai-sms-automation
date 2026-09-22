@@ -1,0 +1,3425 @@
+{
+  "name": "Send Message Use Twilio",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1008,
+        1008
+      ],
+      "id": "a06cca2a-30cc-43f0-bdeb-4f7930d478b8",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ifp3vQaPyQRXNQbfhPFG-ta8gbjhj_AWz52LfaVTpbo",
+          "mode": "list",
+          "cachedResultName": "Rodeny Data Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ifp3vQaPyQRXNQbfhPFG-ta8gbjhj_AWz52LfaVTpbo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ifp3vQaPyQRXNQbfhPFG-ta8gbjhj_AWz52LfaVTpbo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -784,
+        1008
+      ],
+      "id": "43e2505c-78b3-48d6-88c9-d8c628aba9c2",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jsmZ6n7GrMBgblWa",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -560,
+        1008
+      ],
+      "id": "d3d85e37-145e-4451-922c-0b10be236d8a",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1eef6cc-ee6d-4527-8350-b16219222ac0",
+              "name": "Wireless - Primary",
+              "value": "={{ $('Get row(s) in sheet').item.json['Wireless - Primary'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a0d5f03d-53cc-4a12-a764-374824be7fe3",
+              "name": "Wireless 1",
+              "value": "={{ $('Get row(s) in sheet').item.json['Wireless 1'] }}",
+              "type": "string"
+            },
+            {
+              "id": "469b1f8b-ab14-42cf-8f88-1f3c2ab0eaa9",
+              "name": "Wireless 2",
+              "value": "={{ $('Get row(s) in sheet').item.json['Wireless 2'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d2f29be8-b712-4bf0-a178-4b4225357f48",
+              "name": "Wireless 3",
+              "value": "={{ $('Get row(s) in sheet').item.json['Wireless 3'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e1fc3a21-6bdb-4a4b-af74-8d8f4f086553",
+              "name": "Wireless 4",
+              "value": "={{ $('Get row(s) in sheet').item.json['Wireless 4'] }}",
+              "type": "string"
+            },
+            {
+              "id": "4ebf1ab4-0d60-4491-a9e4-e76e087b6534",
+              "name": "Status Message",
+              "value": "={{ $('Get row(s) in sheet').item.json['Status Message'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a2fe5d54-b88a-4d96-9a29-2d45b39c3a4d",
+              "name": "row_number",
+              "value": "={{ $json.row_number }}",
+              "type": "number"
+            },
+            {
+              "id": "6fd594c1-5505-4894-8b74-48612ccdfc82",
+              "name": "body",
+              "value": "={{ $json.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -96,
+        1024
+      ],
+      "id": "13f941a1-fc4b-4bc8-b19a-ac1d37250919",
+      "name": "Get All Numbers from Row"
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $('Get All Numbers from Row').first().json;\n\nconst wirelessFields = [\n  'Wireless - Primary',\n  'Wireless 1',\n  'Wireless 2',\n  'Wireless 3',\n  'Wireless 4'\n];\n\n// Collect only non-empty numbers\nconst numbers = wirelessFields\n  .map(field => row[field])\n  .filter(value => typeof value === 'string' && value.trim() !== '');\n\nreturn [\n  {\n    json: {\n      row_number: row.row_number,\n      status_message: row['Status Message'] || '',\n      numbers\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        1024
+      ],
+      "id": "18598de9-3b88-4f4b-b833-cf69e591468c",
+      "name": "Get All Numbers From Row By Row"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ifp3vQaPyQRXNQbfhPFG-ta8gbjhj_AWz52LfaVTpbo",
+          "mode": "list",
+          "cachedResultName": "Rodeny Data Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ifp3vQaPyQRXNQbfhPFG-ta8gbjhj_AWz52LfaVTpbo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ifp3vQaPyQRXNQbfhPFG-ta8gbjhj_AWz52LfaVTpbo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get All Numbers From Row By Row').item.json.row_number }}",
+            "Status Message": "Sent"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Unit #",
+              "displayName": "Unit #",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "State",
+              "displayName": "State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Zip",
+              "displayName": "Zip",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "County",
+              "displayName": "County",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "APN",
+              "displayName": "APN",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Owner Occupied",
+              "displayName": "Owner Occupied",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Wireless - Primary",
+              "displayName": "Wireless - Primary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Landline - Primary",
+              "displayName": "Landline - Primary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Wireless 1",
+              "displayName": "Wireless 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Wireless 2",
+              "displayName": "Wireless 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Wireless 3",
+              "displayName": "Wireless 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Wireless 4",
+              "displayName": "Wireless 4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Landline 1",
+              "displayName": "Landline 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Landline 2",
+              "displayName": "Landline 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Landline 3",
+              "displayName": "Landline 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status Message",
+              "displayName": "Status Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Landline 4",
+              "displayName": "Landline 4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email 1",
+              "displayName": "Email 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email 2",
+              "displayName": "Email 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Owner 1 First Name",
+              "displayName": "Owner 1 First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Owner 1 Last Name",
+              "displayName": "Owner 1 Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Owner 2 First Name",
+              "displayName": "Owner 2 First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Owner 2 Last Name",
+              "displayName": "Owner 2 Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Mailing Care of Name",
+              "displayName": "Mailing Care of Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Mailing Address",
+              "displayName": "Mailing Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Mailing Unit #",
+              "displayName": "Mailing Unit #",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Mailing City",
+              "displayName": "Mailing City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Mailing State",
+              "displayName": "Mailing State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Mailing Zip",
+              "displayName": "Mailing Zip",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Mailing County",
+              "displayName": "Mailing County",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Do Not Mail",
+              "displayName": "Do Not Mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Property Type",
+              "displayName": "Property Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Bedrooms",
+              "displayName": "Bedrooms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total Bathrooms",
+              "displayName": "Total Bathrooms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Building Sqft",
+              "displayName": "Building Sqft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Lot Size Sqft",
+              "displayName": "Lot Size Sqft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Effective Year Built",
+              "displayName": "Effective Year Built",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total Assessed Value",
+              "displayName": "Total Assessed Value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Sale Recording Date",
+              "displayName": "Last Sale Recording Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Sale Amount",
+              "displayName": "Last Sale Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total Open Loans",
+              "displayName": "Total Open Loans",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Est. Remaining balance of Open Loans",
+              "displayName": "Est. Remaining balance of Open Loans",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Est. Value",
+              "displayName": "Est. Value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Est. Loan-to-Value",
+              "displayName": "Est. Loan-to-Value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Est. Equity",
+              "displayName": "Est. Equity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total Condition",
+              "displayName": "Total Condition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Interior Condition",
+              "displayName": "Interior Condition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Exterior Condition",
+              "displayName": "Exterior Condition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Bathroom Condition",
+              "displayName": "Bathroom Condition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Kitchen Condition",
+              "displayName": "Kitchen Condition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Foreclosure Factor",
+              "displayName": "Foreclosure Factor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "MLS Status",
+              "displayName": "MLS Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "MLS Date",
+              "displayName": "MLS Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "MLS Amount",
+              "displayName": "MLS Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Amount",
+              "displayName": "Lien Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Marketing Lists",
+              "displayName": "Marketing Lists",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date Added to List",
+              "displayName": "Date Added to List",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Method of Add",
+              "displayName": "Method of Add",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Pipeline Stage",
+              "displayName": "Pipeline Stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "threadId",
+              "displayName": "threadId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "outreachSentAt",
+              "displayName": "outreachSentAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "lastChannel",
+              "displayName": "lastChannel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "statusNote",
+              "displayName": "statusNote",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Temperature",
+              "displayName": "Temperature",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Contract Signed",
+              "displayName": "Contract Signed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Dispo Status",
+              "displayName": "Dispo Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        6032,
+        544
+      ],
+      "id": "5bc6ea47-efea-4b04-8f51-7df9d9d0accd",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jsmZ6n7GrMBgblWa",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (!state.initialized) {\n  state.queue = [];\n  state.currentRow = null;\n  state.processingRowId = null;\n  state.allowed = true;\n\n  state.twilioLimits = {};\n  for (let i = 1; i <= 10; i++) {\n    state.twilioLimits[i] = {\n      dailyLimit: 5,\n      usedToday: 0\n    };\n  }\n\n  state.initialized = true;\n}\n\nreturn [{ json: { \n  initialized: true,\n  queue:state.queue,\n  currentRow:state.currentRow,\n  processingRowId:state.processingRowId,\n  twilioLimits:state.twilioLimits,\n  allowed:state.allowed,\n                } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        1024
+      ],
+      "id": "6605340d-54c3-4f15-9a29-96a8a8052acb",
+      "name": "Save the Initialized Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nconst incomingNumbers = $('Get All Numbers From Row By Row').first().json.numbers;\nconst rowNumber = $('Get All Numbers From Row By Row').first().json.row_number;\n\nfor (const number of incomingNumbers) {\n  const exists = state.queue.some(\n    q => q.number === number && q.row === rowNumber\n  );\n\n  if (!exists) {\n    state.queue.push({\n      number,\n      row: rowNumber,\n      status: 'QUEUED'\n    });\n  }\n}\n\nreturn [{ json: { queueSize: state.queue.length,\n                incomingNumbers:incomingNumbers,\n                rowNumber:rowNumber,\n                } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        1024
+      ],
+      "id": "de895483-6091-4376-8678-fb48f7929799",
+      "name": "Extract All Numbers Row By Row"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "55db83df-1274-4637-9db7-0b1e691d9d43",
+              "leftValue": "={{ $json.numbers }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        544
+      ],
+      "id": "b75d25d7-c015-48b1-9bfb-0199d7d6c5d2",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 1; // Twilio number index (1–10)\n\nconst limit = state.twilioLimits[key];\n\n// Defensive check (in case state was reset)\nif (!limit) {\n  state.allowed = false;\n  return [{ json: { allowed: false, key, reason: 'Limit not found' } }];\n}\n\n// Check daily limit\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n\n  return [{\n    json: {\n      allowed: false,\n      key,\n      usedToday: limit.usedToday,\n      dailyLimit: limit.dailyLimit\n    }\n  }];\n}\n\n// Allowed case\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        1024
+      ],
+      "id": "a783ef3e-7671-44d4-9218-d4fa284e9d0e",
+      "name": "Check Limit Twilio  1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 2; // Twilio number index (1–10)\n\nconst limit = state.twilioLimits[key];\n\n// Defensive check (in case state was reset)\nif (!limit) {\n  state.allowed = false;\n  return [{ json: { allowed: false, key, reason: 'Limit not found' } }];\n}\n\n// Check daily limit\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n\n  return [{\n    json: {\n      allowed: false,\n      key,\n      usedToday: limit.usedToday,\n      dailyLimit: limit.dailyLimit\n    }\n  }];\n}\n\n// Allowed case\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        1280
+      ],
+      "id": "d1a05d1e-69f8-4e09-a0b2-75dff1d05395",
+      "name": "Check Limit Twilio 2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ba875d7-5715-4883-bab7-cbcb3c9e0a59",
+              "leftValue": "={{ $json.usedToday }}",
+              "rightValue": "={{5}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "024516a1-6164-4fbe-996d-e5eeedf3863e",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "aa5e5d60-1a1d-4bfd-8110-d65162884095",
+              "leftValue": "={{ $json.key }}",
+              "rightValue": "={{ 2 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1424,
+        1280
+      ],
+      "id": "6abd8420-87f8-4237-a0a5-a524a2ed672e",
+      "name": "Limit Used Today 2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ba875d7-5715-4883-bab7-cbcb3c9e0a59",
+              "leftValue": "={{ $json.usedToday }}",
+              "rightValue": "={{5}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "024516a1-6164-4fbe-996d-e5eeedf3863e",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "aa5e5d60-1a1d-4bfd-8110-d65162884095",
+              "leftValue": "={{ $json.key }}",
+              "rightValue": "={{ 1 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1024,
+        1024
+      ],
+      "id": "3f96a618-0e7a-470a-9412-e025cc248fe4",
+      "name": "Limit Used Today 1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (state.processingRowId) {\n  return [{ json: { action: 'BUSY' } }];\n}\n\nif (state.queue.length === 0) {\n  return [{ json: { action: 'EMPTY' } }];\n}\n\nconst item = state.queue.shift();\nstate.processingRowId = item.row;\n\nreturn [{\n  json: {\n    action: 'PROCESS',\n    number: item.number,\n    row: item.row,\n    length:state.queue.length,\n    queue:state.queue,\n    id:state.processingRowId,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1728,
+        1264
+      ],
+      "id": "37fd1f8c-d793-42b0-8ebd-c86bc7b78e6b",
+      "name": "Update Queue Shift the Number One By One 2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (state.processingRowId) {\n  return [{ json: { action: 'BUSY' } }];\n}\n\nif (state.queue.length === 0) {\n  return [{ json: { action: 'EMPTY' } }];\n}\n\nconst item = state.queue.shift();\nstate.processingRowId = item.row;\n\nreturn [{\n  json: {\n    action: 'PROCESS',\n    number: item.number,\n    row: item.row,\n    length:state.queue.length,\n    queue:state.queue,\n    id:state.processingRowId,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        1008
+      ],
+      "id": "032f0068-3d13-4905-ba08-4de18bcf63a6",
+      "name": "Update Queue Shift the Number One By One 1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 2;\n\nconst limit = state.twilioLimits[key];\n\n// Reset row processing marker AFTER successful send cycle (safe here)\nstate.processingRowId = null;\n\n// Check limit BEFORE increment\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n  return [{\n  json: {\n    allowed: false,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n}\n\n// Allowed → increment usage\nlimit.usedToday += 1;\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2272,
+        1264
+      ],
+      "id": "bbdecfb4-689b-483c-b0ee-2bba755acde9",
+      "name": "Increment Limit One By One 2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 1;\n\nconst limit = state.twilioLimits[key];\n\n// Reset row processing marker AFTER successful send cycle (safe here)\nstate.processingRowId = null;\n\n// Check limit BEFORE increment\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n  return [{\n  json: {\n    allowed: false,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n}\n\n// Allowed → increment usage\nlimit.usedToday += 1;\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1856,
+        1008
+      ],
+      "id": "95c57091-96bb-42ff-ae9d-a2e9917ef73e",
+      "name": "Increment Limit One By One 1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e73a123b-d341-427e-9f08-991188af4463",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2560,
+        1264
+      ],
+      "id": "e9f0f794-b55c-4a26-9a89-d64c7a7bc029",
+      "name": "Row Exit 2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e73a123b-d341-427e-9f08-991188af4463",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2128,
+        1008
+      ],
+      "id": "3c9b6316-9db8-4f3e-9b5a-7aface11a3e5",
+      "name": "Row Exit 1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 3; // Twilio number index (1–10)\n\nconst limit = state.twilioLimits[key];\n\n// Defensive check (in case state was reset)\nif (!limit) {\n  state.allowed = false;\n  return [{ json: { allowed: false, key, reason: 'Limit not found' } }];\n}\n\n// Check daily limit\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n\n  return [{\n    json: {\n      allowed: false,\n      key,\n      usedToday: limit.usedToday,\n      dailyLimit: limit.dailyLimit\n    }\n  }];\n}\n\n// Allowed case\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        1536
+      ],
+      "id": "a6f40ecc-fa92-49d0-a22a-a228a6b64112",
+      "name": "Check Limit Twilio 3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ba875d7-5715-4883-bab7-cbcb3c9e0a59",
+              "leftValue": "={{ $json.usedToday }}",
+              "rightValue": "={{5}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "024516a1-6164-4fbe-996d-e5eeedf3863e",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "aa5e5d60-1a1d-4bfd-8110-d65162884095",
+              "leftValue": "={{ $json.key }}",
+              "rightValue": "={{ 3 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1824,
+        1536
+      ],
+      "id": "edd50190-0945-4313-bdf2-12decfb06a9d",
+      "name": "Limit Used Today 3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (state.processingRowId) {\n  return [{ json: { action: 'BUSY' } }];\n}\n\nif (state.queue.length === 0) {\n  return [{ json: { action: 'EMPTY' } }];\n}\n\nconst item = state.queue.shift();\nstate.processingRowId = item.row;\n\nreturn [{\n  json: {\n    action: 'PROCESS',\n    number: item.number,\n    row: item.row,\n    length:state.queue.length,\n    queue:state.queue,\n    id:state.processingRowId,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2128,
+        1520
+      ],
+      "id": "8bcd7eb6-e23c-4ca3-ad69-48e04ee15ffa",
+      "name": "Update Queue Shift the Number One By One 3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 3;\n\nconst limit = state.twilioLimits[key];\n\n// Reset row processing marker AFTER successful send cycle (safe here)\nstate.processingRowId = null;\n\n// Check limit BEFORE increment\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n  return [{\n  json: {\n    allowed: false,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n}\n\n// Allowed → increment usage\nlimit.usedToday += 1;\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2704,
+        1520
+      ],
+      "id": "22f4565d-3f7e-4e7b-9a2b-322638a55814",
+      "name": "Increment Limit One By One 3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e73a123b-d341-427e-9f08-991188af4463",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2960,
+        1520
+      ],
+      "id": "750aa51e-ce89-4d0d-b96b-5b4f7e5c28da",
+      "name": "Row Exit 3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 4; // Twilio number index (1–10)\n\nconst limit = state.twilioLimits[key];\n\n// Defensive check (in case state was reset)\nif (!limit) {\n  state.allowed = false;\n  return [{ json: { allowed: false, key, reason: 'Limit not found' } }];\n}\n\n// Check daily limit\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n\n  return [{\n    json: {\n      allowed: false,\n      key,\n      usedToday: limit.usedToday,\n      dailyLimit: limit.dailyLimit\n    }\n  }];\n}\n\n// Allowed case\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1936,
+        1792
+      ],
+      "id": "fd3ffb32-5609-4e31-ab94-8264d76edb61",
+      "name": "Check Limit Twilio 4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (state.processingRowId) {\n  return [{ json: { action: 'BUSY' } }];\n}\n\nif (state.queue.length === 0) {\n  return [{ json: { action: 'EMPTY' } }];\n}\n\nconst item = state.queue.shift();\nstate.processingRowId = item.row;\n\nreturn [{\n  json: {\n    action: 'PROCESS',\n    number: item.number,\n    row: item.row,\n    length:state.queue.length,\n    queue:state.queue,\n    id:state.processingRowId,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2528,
+        1776
+      ],
+      "id": "54770652-4afa-411e-aac0-e27c05e809f3",
+      "name": "Update Queue Shift the Number One By One 4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ba875d7-5715-4883-bab7-cbcb3c9e0a59",
+              "leftValue": "={{ $json.usedToday }}",
+              "rightValue": "={{5}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "024516a1-6164-4fbe-996d-e5eeedf3863e",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "aa5e5d60-1a1d-4bfd-8110-d65162884095",
+              "leftValue": "={{ $json.key }}",
+              "rightValue": "={{ 4 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2224,
+        1792
+      ],
+      "id": "637fc0a6-6d90-418b-9e1b-90ef74c3fb8f",
+      "name": "Limit Used Today 4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 4;\n\nconst limit = state.twilioLimits[key];\n\n// Reset row processing marker AFTER successful send cycle (safe here)\nstate.processingRowId = null;\n\n// Check limit BEFORE increment\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n  return [{\n  json: {\n    allowed: false,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n}\n\n// Allowed → increment usage\nlimit.usedToday += 1;\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3056,
+        1776
+      ],
+      "id": "5b09bb93-615d-4e18-ae87-b2ca251659f5",
+      "name": "Increment Limit One By One 4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e73a123b-d341-427e-9f08-991188af4463",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3296,
+        1776
+      ],
+      "id": "9a709eac-11b3-40a9-bff4-b8344e613b9c",
+      "name": "Row Exit 4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 5; // Twilio number index (1–10)\n\nconst limit = state.twilioLimits[key];\n\n// Defensive check (in case state was reset)\nif (!limit) {\n  state.allowed = false;\n  return [{ json: { allowed: false, key, reason: 'Limit not found' } }];\n}\n\n// Check daily limit\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n\n  return [{\n    json: {\n      allowed: false,\n      key,\n      usedToday: limit.usedToday,\n      dailyLimit: limit.dailyLimit\n    }\n  }];\n}\n\n// Allowed case\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2336,
+        2048
+      ],
+      "id": "82896133-87cc-4558-95f6-85e54c6494ec",
+      "name": "Check Limit Twilio 5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ba875d7-5715-4883-bab7-cbcb3c9e0a59",
+              "leftValue": "={{ $json.usedToday }}",
+              "rightValue": "={{5}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "024516a1-6164-4fbe-996d-e5eeedf3863e",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "aa5e5d60-1a1d-4bfd-8110-d65162884095",
+              "leftValue": "={{ $json.key }}",
+              "rightValue": "={{ 5 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2624,
+        2048
+      ],
+      "id": "5a473cda-aa31-48ce-87ab-d0f031a49bef",
+      "name": "Limit Used Today 5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (state.processingRowId) {\n  return [{ json: { action: 'BUSY' } }];\n}\n\nif (state.queue.length === 0) {\n  return [{ json: { action: 'EMPTY' } }];\n}\n\nconst item = state.queue.shift();\nstate.processingRowId = item.row;\n\nreturn [{\n  json: {\n    action: 'PROCESS',\n    number: item.number,\n    row: item.row,\n    length:state.queue.length,\n    queue:state.queue,\n    id:state.processingRowId,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2928,
+        2032
+      ],
+      "id": "9da45d86-d096-43e3-8a8b-1f0820242d0c",
+      "name": "Update Queue Shift the Number One By One 5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 5;\n\nconst limit = state.twilioLimits[key];\n\n// Reset row processing marker AFTER successful send cycle (safe here)\nstate.processingRowId = null;\n\n// Check limit BEFORE increment\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n  return [{\n  json: {\n    allowed: false,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n}\n\n// Allowed → increment usage\nlimit.usedToday += 1;\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3440,
+        2032
+      ],
+      "id": "cb59d440-efe5-4492-8cd8-46b92c2b0b12",
+      "name": "Increment Limit One By One 5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e73a123b-d341-427e-9f08-991188af4463",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3680,
+        2032
+      ],
+      "id": "7c2c3515-faab-4c89-b607-8d2ec49da7d7",
+      "name": "Row Exit 5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 6; // Twilio number index (1–10)\n\nconst limit = state.twilioLimits[key];\n\n// Defensive check (in case state was reset)\nif (!limit) {\n  state.allowed = false;\n  return [{ json: { allowed: false, key, reason: 'Limit not found' } }];\n}\n\n// Check daily limit\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n\n  return [{\n    json: {\n      allowed: false,\n      key,\n      usedToday: limit.usedToday,\n      dailyLimit: limit.dailyLimit\n    }\n  }];\n}\n\n// Allowed case\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2736,
+        2304
+      ],
+      "id": "d53fa201-6346-43fd-be90-5a306bd35e33",
+      "name": "Check Limit Twilio 6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ba875d7-5715-4883-bab7-cbcb3c9e0a59",
+              "leftValue": "={{ $json.usedToday }}",
+              "rightValue": "={{5}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "024516a1-6164-4fbe-996d-e5eeedf3863e",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "aa5e5d60-1a1d-4bfd-8110-d65162884095",
+              "leftValue": "={{ $json.key }}",
+              "rightValue": "={{ 6 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3024,
+        2304
+      ],
+      "id": "7d72dbb9-f1f1-4cfd-b2f4-3a736c6b6b9e",
+      "name": "Limit Used Today 6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (state.processingRowId) {\n  return [{ json: { action: 'BUSY' } }];\n}\n\nif (state.queue.length === 0) {\n  return [{ json: { action: 'EMPTY' } }];\n}\n\nconst item = state.queue.shift();\nstate.processingRowId = item.row;\n\nreturn [{\n  json: {\n    action: 'PROCESS',\n    number: item.number,\n    row: item.row,\n    length:state.queue.length,\n    queue:state.queue,\n    id:state.processingRowId,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3328,
+        2288
+      ],
+      "id": "88dde3aa-95ee-4057-8f88-f220e238f977",
+      "name": "Update Queue Shift the Number One By One 6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e73a123b-d341-427e-9f08-991188af4463",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4080,
+        2288
+      ],
+      "id": "8c503b90-e7f7-401d-aba9-5fa12087d8de",
+      "name": "Row Exit 6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 6;\n\nconst limit = state.twilioLimits[key];\n\n// Reset row processing marker AFTER successful send cycle (safe here)\nstate.processingRowId = null;\n\n// Check limit BEFORE increment\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n  return [{\n  json: {\n    allowed: false,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n}\n\n// Allowed → increment usage\nlimit.usedToday += 1;\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3840,
+        2288
+      ],
+      "id": "212f07f7-9613-41ca-9c0c-12046815ce3b",
+      "name": "Increment Limit One By One 6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 7; // Twilio number index (1–10)\n\nconst limit = state.twilioLimits[key];\n\n// Defensive check (in case state was reset)\nif (!limit) {\n  state.allowed = false;\n  return [{ json: { allowed: false, key, reason: 'Limit not found' } }];\n}\n\n// Check daily limit\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n\n  return [{\n    json: {\n      allowed: false,\n      key,\n      usedToday: limit.usedToday,\n      dailyLimit: limit.dailyLimit\n    }\n  }];\n}\n\n// Allowed case\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3136,
+        2560
+      ],
+      "id": "2e8339fa-e0d1-40da-94e4-9a5e92eb3675",
+      "name": "Check Limit Twilio 7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ba875d7-5715-4883-bab7-cbcb3c9e0a59",
+              "leftValue": "={{ $json.usedToday }}",
+              "rightValue": "={{5}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "024516a1-6164-4fbe-996d-e5eeedf3863e",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "aa5e5d60-1a1d-4bfd-8110-d65162884095",
+              "leftValue": "={{ $json.key }}",
+              "rightValue": "={{ 7 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3424,
+        2560
+      ],
+      "id": "106d285c-6f36-4a8b-82c5-d8a7dfd417bf",
+      "name": "Limit Used Today 7"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (state.processingRowId) {\n  return [{ json: { action: 'BUSY' } }];\n}\n\nif (state.queue.length === 0) {\n  return [{ json: { action: 'EMPTY' } }];\n}\n\nconst item = state.queue.shift();\nstate.processingRowId = item.row;\n\nreturn [{\n  json: {\n    action: 'PROCESS',\n    number: item.number,\n    row: item.row,\n    length:state.queue.length,\n    queue:state.queue,\n    id:state.processingRowId,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3728,
+        2544
+      ],
+      "id": "4bf9b7ed-431f-425e-bd71-cf2635c5e344",
+      "name": "Update Queue Shift the Number One By One 7"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 7;\n\nconst limit = state.twilioLimits[key];\n\n// Reset row processing marker AFTER successful send cycle (safe here)\nstate.processingRowId = null;\n\n// Check limit BEFORE increment\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n  return [{\n  json: {\n    allowed: false,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n}\n\n// Allowed → increment usage\nlimit.usedToday += 1;\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4240,
+        2544
+      ],
+      "id": "5f59ecc5-56bc-4597-9bf4-4c1f31f18ed8",
+      "name": "Increment Limit One By One 7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e73a123b-d341-427e-9f08-991188af4463",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4480,
+        2544
+      ],
+      "id": "618564af-35b5-4baa-ab90-65580685f304",
+      "name": "Row Exit 7"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 8; // Twilio number index (1–10)\n\nconst limit = state.twilioLimits[key];\n\n// Defensive check (in case state was reset)\nif (!limit) {\n  state.allowed = false;\n  return [{ json: { allowed: false, key, reason: 'Limit not found' } }];\n}\n\n// Check daily limit\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n\n  return [{\n    json: {\n      allowed: false,\n      key,\n      usedToday: limit.usedToday,\n      dailyLimit: limit.dailyLimit\n    }\n  }];\n}\n\n// Allowed case\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3536,
+        2816
+      ],
+      "id": "5e1710cf-241e-4e79-bbb4-ed80d8054f69",
+      "name": "Check Limit Twilio 8"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ba875d7-5715-4883-bab7-cbcb3c9e0a59",
+              "leftValue": "={{ $json.usedToday }}",
+              "rightValue": "={{5}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "024516a1-6164-4fbe-996d-e5eeedf3863e",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "aa5e5d60-1a1d-4bfd-8110-d65162884095",
+              "leftValue": "={{ $json.key }}",
+              "rightValue": "={{ 8 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3824,
+        2816
+      ],
+      "id": "6aac1af5-fca6-4cd1-a08f-ab03e69cf48f",
+      "name": "Limit Used Today 8"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (state.processingRowId) {\n  return [{ json: { action: 'BUSY' } }];\n}\n\nif (state.queue.length === 0) {\n  return [{ json: { action: 'EMPTY' } }];\n}\n\nconst item = state.queue.shift();\nstate.processingRowId = item.row;\n\nreturn [{\n  json: {\n    action: 'PROCESS',\n    number: item.number,\n    row: item.row,\n    length:state.queue.length,\n    queue:state.queue,\n    id:state.processingRowId,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4128,
+        2800
+      ],
+      "id": "77a98df4-7e66-4dd5-8122-14a9d5581f7c",
+      "name": "Update Queue Shift the Number One By One 8"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 8;\n\nconst limit = state.twilioLimits[key];\n\n// Reset row processing marker AFTER successful send cycle (safe here)\nstate.processingRowId = null;\n\n// Check limit BEFORE increment\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n  return [{\n  json: {\n    allowed: false,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n}\n\n// Allowed → increment usage\nlimit.usedToday += 1;\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4656,
+        2800
+      ],
+      "id": "82b48e14-5869-4dbb-b99e-7892e6f51917",
+      "name": "Increment Limit One By One 8"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e73a123b-d341-427e-9f08-991188af4463",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4896,
+        2800
+      ],
+      "id": "87321cc8-e855-41dc-91a7-1f98899d4b2d",
+      "name": "Row Exit 8"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 9; // Twilio number index (1–10)\n\nconst limit = state.twilioLimits[key];\n\n// Defensive check (in case state was reset)\nif (!limit) {\n  state.allowed = false;\n  return [{ json: { allowed: false, key, reason: 'Limit not found' } }];\n}\n\n// Check daily limit\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n\n  return [{\n    json: {\n      allowed: false,\n      key,\n      usedToday: limit.usedToday,\n      dailyLimit: limit.dailyLimit\n    }\n  }];\n}\n\n// Allowed case\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3952,
+        3072
+      ],
+      "id": "8ca6bced-cbf7-4a23-873d-4c819854137a",
+      "name": "Check Limit Twilio 9"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ba875d7-5715-4883-bab7-cbcb3c9e0a59",
+              "leftValue": "={{ $json.usedToday }}",
+              "rightValue": "={{5}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "024516a1-6164-4fbe-996d-e5eeedf3863e",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "aa5e5d60-1a1d-4bfd-8110-d65162884095",
+              "leftValue": "={{ $json.key }}",
+              "rightValue": "={{ 9 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4240,
+        3072
+      ],
+      "id": "1ee1e995-ee1b-47b2-8981-574d785e90d6",
+      "name": "Limit Used Today 9"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (state.processingRowId) {\n  return [{ json: { action: 'BUSY' } }];\n}\n\nif (state.queue.length === 0) {\n  return [{ json: { action: 'EMPTY' } }];\n}\n\nconst item = state.queue.shift();\nstate.processingRowId = item.row;\n\nreturn [{\n  json: {\n    action: 'PROCESS',\n    number: item.number,\n    row: item.row,\n    length:state.queue.length,\n    queue:state.queue,\n    id:state.processingRowId,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4544,
+        3056
+      ],
+      "id": "8b80ef4d-5e21-408b-a238-2757fb7573d9",
+      "name": "Update Queue Shift the Number One By One 9"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 9;\n\nconst limit = state.twilioLimits[key];\n\n// Reset row processing marker AFTER successful send cycle (safe here)\nstate.processingRowId = null;\n\n// Check limit BEFORE increment\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n  return [{\n  json: {\n    allowed: false,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n}\n\n// Allowed → increment usage\nlimit.usedToday += 1;\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5056,
+        3056
+      ],
+      "id": "be1e4778-e55f-421b-baa9-d7ec2f74d505",
+      "name": "Increment Limit One By One 9"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e73a123b-d341-427e-9f08-991188af4463",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        5296,
+        3056
+      ],
+      "id": "33152c12-d16f-4bce-b719-4aa5af5f8508",
+      "name": "Row Exit 9"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 10; // Twilio number index (1–10)\n\nconst limit = state.twilioLimits[key];\n\n// Defensive check (in case state was reset)\nif (!limit) {\n  state.allowed = false;\n  return [{ json: { allowed: false, key, reason: 'Limit not found' } }];\n}\n\n// Check daily limit\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n\n  return [{\n    json: {\n      allowed: false,\n      key,\n      usedToday: limit.usedToday,\n      dailyLimit: limit.dailyLimit\n    }\n  }];\n}\n\n// Allowed case\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4352,
+        3328
+      ],
+      "id": "adf1ec31-7a50-4f41-92fb-079dc5e22514",
+      "name": "Check Limit Twilio 10"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ba875d7-5715-4883-bab7-cbcb3c9e0a59",
+              "leftValue": "={{ $json.usedToday }}",
+              "rightValue": "={{5}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "024516a1-6164-4fbe-996d-e5eeedf3863e",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "aa5e5d60-1a1d-4bfd-8110-d65162884095",
+              "leftValue": "={{ $json.key }}",
+              "rightValue": "={{ 10 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4640,
+        3328
+      ],
+      "id": "b7d656d1-f2df-4370-8fad-62da8df69a90",
+      "name": "Limit Used Today 10"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\n\nif (state.processingRowId) {\n  return [{ json: { action: 'BUSY' } }];\n}\n\nif (state.queue.length === 0) {\n  return [{ json: { action: 'EMPTY' } }];\n}\n\nconst item = state.queue.shift();\nstate.processingRowId = item.row;\n\nreturn [{\n  json: {\n    action: 'PROCESS',\n    number: item.number,\n    row: item.row,\n    length:state.queue.length,\n    queue:state.queue,\n    id:state.processingRowId,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4944,
+        3312
+      ],
+      "id": "c0a7eb3c-9a81-4b1f-8468-52c6d1008d6f",
+      "name": "Update Queue Shift the Number One By One 10"
+    },
+    {
+      "parameters": {
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst key = 10;\n\nconst limit = state.twilioLimits[key];\n\n// Reset row processing marker AFTER successful send cycle (safe here)\nstate.processingRowId = null;\n\n// Check limit BEFORE increment\nif (limit.usedToday >= limit.dailyLimit) {\n  state.allowed = false;\n  return [{\n  json: {\n    allowed: false,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n}\n\n// Allowed → increment usage\nlimit.usedToday += 1;\nstate.allowed = true;\n\nreturn [{\n  json: {\n    allowed: true,\n    key,\n    usedToday: limit.usedToday,\n    dailyLimit: limit.dailyLimit,\n    queue:state.queue,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5456,
+        3312
+      ],
+      "id": "0ecafb4a-cab1-4533-b8ca-ab3c6d044dcb",
+      "name": "Increment Limit One By One 10"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e73a123b-d341-427e-9f08-991188af4463",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        5712,
+        3312
+      ],
+      "id": "bcc07224-e2b2-43ce-a88e-f653f8f13bf3",
+      "name": "Row Exit 10"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\nconst FROM_NUMBER = '+19045696676';\nconst MESSAGE_BODY = $node[\"Get All Numbers from Row\"].json.body;\n\n// ===== INPUT (single row number) =====\nconst raw = $json.number;\n\nconst numbers = typeof raw === 'string'\n  ? [raw.replace(/[^\\d+]/g, '')]\n  : [];\n\n// Validate\nconst validNumbers = numbers.filter(n => n.startsWith('+') && n.length >= 11);\n\nif (validNumbers.length === 0) {\n  return [{\n    json: {\n      status: 'SKIPPED',\n      reason: 'Invalid or empty phone number',\n      raw\n    }\n  }];\n}\n\n// Twilio endpoint\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\nconst results = [];\n\nfor (const to of validNumbers) {\n  try {\n    const body =\n      `To=${encodeURIComponent(to)}` +\n      `&From=${encodeURIComponent(FROM_NUMBER)}` +\n      `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url,\n      headers: {\n        Authorization: `Basic ${authHeader}`,\n        'Content-Type': 'application/x-www-form-urlencoded',\n      },\n      body,\n    });\n\n    results.push({ to, status: 'SENT', sid: response.sid });\n\n  } catch (err) {\n    results.push({\n      to,\n      status: 'FAILED',\n      error: err?.response?.body || err.message\n    });\n  }\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        1008
+      ],
+      "id": "ee50499f-c395-4eae-9110-08db9a8c36ef",
+      "name": "Send Message On Twilio 1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\nconst FROM_NUMBER = '+19042044671';\nconst MESSAGE_BODY = $node[\"Get All Numbers from Row\"].json.body;\n\n// ===== INPUT (single row number) =====\nconst raw = $json.number;\n\nconst numbers = typeof raw === 'string'\n  ? [raw.replace(/[^\\d+]/g, '')]\n  : [];\n\n// Validate\nconst validNumbers = numbers.filter(n => n.startsWith('+') && n.length >= 11);\n\nif (validNumbers.length === 0) {\n  return [{\n    json: {\n      status: 'SKIPPED',\n      reason: 'Invalid or empty phone number',\n      raw\n    }\n  }];\n}\n\n// Twilio endpoint\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\nconst results = [];\n\nfor (const to of validNumbers) {\n  try {\n    const body =\n      `To=${encodeURIComponent(to)}` +\n      `&From=${encodeURIComponent(FROM_NUMBER)}` +\n      `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url,\n      headers: {\n        Authorization: `Basic ${authHeader}`,\n        'Content-Type': 'application/x-www-form-urlencoded',\n      },\n      body,\n    });\n\n    results.push({ to, status: 'SENT', sid: response.sid });\n\n  } catch (err) {\n    results.push({\n      to,\n      status: 'FAILED',\n      error: err?.response?.body || err.message\n    });\n  }\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        1264
+      ],
+      "id": "e020a4f0-cf48-46ee-ba5f-e4ee0612e872",
+      "name": "Send Message On Twilio 2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\nconst FROM_NUMBER = '+13529663584';\nconst MESSAGE_BODY = $node[\"Get All Numbers from Row\"].json.body;\n\n// ===== INPUT (single row number) =====\nconst raw = $json.number;\n\nconst numbers = typeof raw === 'string'\n  ? [raw.replace(/[^\\d+]/g, '')]\n  : [];\n\n// Validate\nconst validNumbers = numbers.filter(n => n.startsWith('+') && n.length >= 11);\n\nif (validNumbers.length === 0) {\n  return [{\n    json: {\n      status: 'SKIPPED',\n      reason: 'Invalid or empty phone number',\n      raw\n    }\n  }];\n}\n\n// Twilio endpoint\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\nconst results = [];\n\nfor (const to of validNumbers) {\n  try {\n    const body =\n      `To=${encodeURIComponent(to)}` +\n      `&From=${encodeURIComponent(FROM_NUMBER)}` +\n      `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url,\n      headers: {\n        Authorization: `Basic ${authHeader}`,\n        'Content-Type': 'application/x-www-form-urlencoded',\n      },\n      body,\n    });\n\n    results.push({ to, status: 'SENT', sid: response.sid });\n\n  } catch (err) {\n    results.push({\n      to,\n      status: 'FAILED',\n      error: err?.response?.body || err.message\n    });\n  }\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2416,
+        1520
+      ],
+      "id": "770088ea-fe08-4d3d-91a5-24c84d76cbe6",
+      "name": "Send Message On Twilio 3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\nconst FROM_NUMBER = '+18509852287';\nconst MESSAGE_BODY = $node[\"Get All Numbers from Row\"].json.body;\n\n// ===== INPUT (single row number) =====\nconst raw = $json.number;\n\nconst numbers = typeof raw === 'string'\n  ? [raw.replace(/[^\\d+]/g, '')]\n  : [];\n\n// Validate\nconst validNumbers = numbers.filter(n => n.startsWith('+') && n.length >= 11);\n\nif (validNumbers.length === 0) {\n  return [{\n    json: {\n      status: 'SKIPPED',\n      reason: 'Invalid or empty phone number',\n      raw\n    }\n  }];\n}\n\n// Twilio endpoint\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\nconst results = [];\n\nfor (const to of validNumbers) {\n  try {\n    const body =\n      `To=${encodeURIComponent(to)}` +\n      `&From=${encodeURIComponent(FROM_NUMBER)}` +\n      `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url,\n      headers: {\n        Authorization: `Basic ${authHeader}`,\n        'Content-Type': 'application/x-www-form-urlencoded',\n      },\n      body,\n    });\n\n    results.push({ to, status: 'SENT', sid: response.sid });\n\n  } catch (err) {\n    results.push({\n      to,\n      status: 'FAILED',\n      error: err?.response?.body || err.message\n    });\n  }\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2800,
+        1776
+      ],
+      "id": "5ad8aacb-585f-44db-90d2-438e4a0df6f8",
+      "name": "Send Message On Twilio 4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\nconst FROM_NUMBER = '+18508528857';\nconst MESSAGE_BODY = $node[\"Get All Numbers from Row\"].json.body;\n\n// ===== INPUT (single row number) =====\nconst raw = $json.number;\n\nconst numbers = typeof raw === 'string'\n  ? [raw.replace(/[^\\d+]/g, '')]\n  : [];\n\n// Validate\nconst validNumbers = numbers.filter(n => n.startsWith('+') && n.length >= 11);\n\nif (validNumbers.length === 0) {\n  return [{\n    json: {\n      status: 'SKIPPED',\n      reason: 'Invalid or empty phone number',\n      raw\n    }\n  }];\n}\n\n// Twilio endpoint\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\nconst results = [];\n\nfor (const to of validNumbers) {\n  try {\n    const body =\n      `To=${encodeURIComponent(to)}` +\n      `&From=${encodeURIComponent(FROM_NUMBER)}` +\n      `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url,\n      headers: {\n        Authorization: `Basic ${authHeader}`,\n        'Content-Type': 'application/x-www-form-urlencoded',\n      },\n      body,\n    });\n\n    results.push({ to, status: 'SENT', sid: response.sid });\n\n  } catch (err) {\n    results.push({\n      to,\n      status: 'FAILED',\n      error: err?.response?.body || err.message\n    });\n  }\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3184,
+        2032
+      ],
+      "id": "ecf272bc-7cb7-4a28-937b-fb840281d9ff",
+      "name": "Send Message On Twilio 5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\nconst FROM_NUMBER = '+13527529284';\nconst MESSAGE_BODY = $node[\"Get All Numbers from Row\"].json.body;\n// ===== INPUT (single row number) =====\nconst raw = $json.number;\n\nconst numbers = typeof raw === 'string'\n  ? [raw.replace(/[^\\d+]/g, '')]\n  : [];\n\n// Validate\nconst validNumbers = numbers.filter(n => n.startsWith('+') && n.length >= 11);\n\nif (validNumbers.length === 0) {\n  return [{\n    json: {\n      status: 'SKIPPED',\n      reason: 'Invalid or empty phone number',\n      raw\n    }\n  }];\n}\n\n// Twilio endpoint\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\nconst results = [];\n\nfor (const to of validNumbers) {\n  try {\n    const body =\n      `To=${encodeURIComponent(to)}` +\n      `&From=${encodeURIComponent(FROM_NUMBER)}` +\n      `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url,\n      headers: {\n        Authorization: `Basic ${authHeader}`,\n        'Content-Type': 'application/x-www-form-urlencoded',\n      },\n      body,\n    });\n\n    results.push({ to, status: 'SENT', sid: response.sid });\n\n  } catch (err) {\n    results.push({\n      to,\n      status: 'FAILED',\n      error: err?.response?.body || err.message\n    });\n  }\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3584,
+        2288
+      ],
+      "id": "11df62ed-4d31-40cb-84e1-ba4c52666858",
+      "name": "Send Message On Twilio 6"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\nconst FROM_NUMBER = '+19046052896';\nconst MESSAGE_BODY = $node[\"Get All Numbers from Row\"].json.body;\n// ===== INPUT (single row number) =====\nconst raw = $json.number;\n\nconst numbers = typeof raw === 'string'\n  ? [raw.replace(/[^\\d+]/g, '')]\n  : [];\n\n// Validate\nconst validNumbers = numbers.filter(n => n.startsWith('+') && n.length >= 11);\n\nif (validNumbers.length === 0) {\n  return [{\n    json: {\n      status: 'SKIPPED',\n      reason: 'Invalid or empty phone number',\n      raw\n    }\n  }];\n}\n\n// Twilio endpoint\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\nconst results = [];\n\nfor (const to of validNumbers) {\n  try {\n    const body =\n      `To=${encodeURIComponent(to)}` +\n      `&From=${encodeURIComponent(FROM_NUMBER)}` +\n      `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url,\n      headers: {\n        Authorization: `Basic ${authHeader}`,\n        'Content-Type': 'application/x-www-form-urlencoded',\n      },\n      body,\n    });\n\n    results.push({ to, status: 'SENT', sid: response.sid });\n\n  } catch (err) {\n    results.push({\n      to,\n      status: 'FAILED',\n      error: err?.response?.body || err.message\n    });\n  }\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3984,
+        2544
+      ],
+      "id": "ceca9438-05c6-4439-b4d8-7b2688ba245b",
+      "name": "Send Message On Twilio 7"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\nconst FROM_NUMBER = '+19046649288';\nconst MESSAGE_BODY = $node[\"Get All Numbers from Row\"].json.body;\n\n// ===== INPUT (single row number) =====\nconst raw = $json.number;\n\nconst numbers = typeof raw === 'string'\n  ? [raw.replace(/[^\\d+]/g, '')]\n  : [];\n\n// Validate\nconst validNumbers = numbers.filter(n => n.startsWith('+') && n.length >= 11);\n\nif (validNumbers.length === 0) {\n  return [{\n    json: {\n      status: 'SKIPPED',\n      reason: 'Invalid or empty phone number',\n      raw\n    }\n  }];\n}\n\n// Twilio endpoint\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\nconst results = [];\n\nfor (const to of validNumbers) {\n  try {\n    const body =\n      `To=${encodeURIComponent(to)}` +\n      `&From=${encodeURIComponent(FROM_NUMBER)}` +\n      `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url,\n      headers: {\n        Authorization: `Basic ${authHeader}`,\n        'Content-Type': 'application/x-www-form-urlencoded',\n      },\n      body,\n    });\n\n    results.push({ to, status: 'SENT', sid: response.sid });\n\n  } catch (err) {\n    results.push({\n      to,\n      status: 'FAILED',\n      error: err?.response?.body || err.message\n    });\n  }\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4400,
+        2800
+      ],
+      "id": "3ee5184b-c5c3-4bda-9807-70d5f0d69ff5",
+      "name": "Send Message On Twilio 8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\nconst FROM_NUMBER = '+18509002596';\nconst MESSAGE_BODY = $node[\"Get All Numbers from Row\"].json.body;\n\n// ===== INPUT (single row number) =====\nconst raw = $json.number;\n\nconst numbers = typeof raw === 'string'\n  ? [raw.replace(/[^\\d+]/g, '')]\n  : [];\n\n// Validate\nconst validNumbers = numbers.filter(n => n.startsWith('+') && n.length >= 11);\n\nif (validNumbers.length === 0) {\n  return [{\n    json: {\n      status: 'SKIPPED',\n      reason: 'Invalid or empty phone number',\n      raw\n    }\n  }];\n}\n\n// Twilio endpoint\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\nconst results = [];\n\nfor (const to of validNumbers) {\n  try {\n    const body =\n      `To=${encodeURIComponent(to)}` +\n      `&From=${encodeURIComponent(FROM_NUMBER)}` +\n      `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url,\n      headers: {\n        Authorization: `Basic ${authHeader}`,\n        'Content-Type': 'application/x-www-form-urlencoded',\n      },\n      body,\n    });\n\n    results.push({ to, status: 'SENT', sid: response.sid });\n\n  } catch (err) {\n    results.push({\n      to,\n      status: 'FAILED',\n      error: err?.response?.body || err.message\n    });\n  }\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4800,
+        3056
+      ],
+      "id": "35b98459-dca7-40bc-befd-053b99d6ef3c",
+      "name": "Send Message On Twilio 9"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== CONFIG =====\nconst ACCOUNT_SID = 'AC0eed0a0301b825f8b65f07bc44522bac';\nconst AUTH_TOKEN = '4ba62cb7cc8cfd561eb27d0a7377dadc';\nconst FROM_NUMBER = '+13528393167';\nconst MESSAGE_BODY = $node[\"Get All Numbers from Row\"].json.body;\n\n// ===== INPUT (single row number) =====\nconst raw = $json.number;\n\nconst numbers = typeof raw === 'string'\n  ? [raw.replace(/[^\\d+]/g, '')]\n  : [];\n\n// Validate\nconst validNumbers = numbers.filter(n => n.startsWith('+') && n.length >= 11);\n\nif (validNumbers.length === 0) {\n  return [{\n    json: {\n      status: 'SKIPPED',\n      reason: 'Invalid or empty phone number',\n      raw\n    }\n  }];\n}\n\n// Twilio endpoint\nconst url = `https://api.twilio.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;\nconst authHeader = Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString('base64');\n\nconst results = [];\n\nfor (const to of validNumbers) {\n  try {\n    const body =\n      `To=${encodeURIComponent(to)}` +\n      `&From=${encodeURIComponent(FROM_NUMBER)}` +\n      `&Body=${encodeURIComponent(MESSAGE_BODY)}`;\n\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url,\n      headers: {\n        Authorization: `Basic ${authHeader}`,\n        'Content-Type': 'application/x-www-form-urlencoded',\n      },\n      body,\n    });\n\n    results.push({ to, status: 'SENT', sid: response.sid });\n\n  } catch (err) {\n    results.push({\n      to,\n      status: 'FAILED',\n      error: err?.response?.body || err.message\n    });\n  }\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5200,
+        3312
+      ],
+      "id": "e5199187-3fb1-4da0-9b2b-5c7d3b59b021",
+      "name": "Send Message On Twilio 10"
+    },
+    {
+      "parameters": {
+        "content": "This Line Send a Message Through Twilio On different Number.",
+        "height": 208,
+        "width": 3408
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        992
+      ],
+      "id": "1f38e88a-4165-453f-a053-ae72ee2a4393",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "This Line Send a Message Through Twilio On different Number.",
+        "height": 208,
+        "width": 1696,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        1248
+      ],
+      "id": "42352c3a-9204-41aa-988b-0e6b32971272",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "This Line Send a Message Through Twilio On different Number.",
+        "height": 208,
+        "width": 1696,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        1504
+      ],
+      "id": "2cec2a59-3fef-4d6c-baef-0230a2a1aabd",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "This Line Send a Message Through Twilio On different Number.",
+        "height": 208,
+        "width": 1632,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        1760
+      ],
+      "id": "7422bf54-ce42-4acd-a23a-41588312f9f5",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "This Line Send a Message Through Twilio On different Number.",
+        "height": 208,
+        "width": 1600,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        2016
+      ],
+      "id": "88f5c74a-1ed8-4b19-b797-d262ed60c8a3",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "This Line Send a Message Through Twilio On different Number.",
+        "height": 208,
+        "width": 1600,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2656,
+        2272
+      ],
+      "id": "1e51b7a1-bf55-4555-9832-271fff69223b",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "This Line Send a Message Through Twilio On different Number.",
+        "height": 208,
+        "width": 1600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3056,
+        2528
+      ],
+      "id": "defc406f-99e0-437d-842a-9fab0cf0f2c5",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "This Line Send a Message Through Twilio On different Number.",
+        "height": 208,
+        "width": 1616,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3456,
+        2784
+      ],
+      "id": "5a09a2a7-710e-4b84-a5ee-14b257a580de",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "This Line Send a Message Through Twilio On different Number.",
+        "height": 208,
+        "width": 1616,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3872,
+        3040
+      ],
+      "id": "7787c685-ded7-43b5-bb1c-2f302753f01c",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "This Line Send a Message Through Twilio On different Number.",
+        "height": 208,
+        "width": 1632,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4256,
+        3296
+      ],
+      "id": "60d86536-0ff8-44ec-aafa-90854c86c29e",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "jsCode": "function clean(v) {\n  return (v || \"\").toString().trim();\n}\n\nconst owner = clean($json[\"Owner 1 First Name\"]) || \"there\";\nconst address = clean($json[\"Address\"]);\nconst city = clean($json[\"City\"]);\nconst state = clean($json[\"State\"]);\n\n// Build location safely\nconst location = [\n  address,\n  city,\n  state\n].filter(Boolean).join(\", \");\n\n// Single-line SMS body (no \\n)\nconst body = `Hi ${owner}, we’re reaching out regarding a property ${location} opportunity in your area. Would you be interested in discussing this? Please let me know if you are interested. Thanks!`;\n\nreturn [\n  {\n    ...$json,\n    body\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -336,
+        1024
+      ],
+      "id": "dd7ce530-f5ea-468b-90bf-3cbd21008bf5",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Numbers from Row": {
+      "main": [
+        [
+          {
+            "node": "Get All Numbers From Row By Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Numbers From Row By Row": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save the Initialized Data": {
+      "main": [
+        [
+          {
+            "node": "Extract All Numbers Row By Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract All Numbers Row By Row": {
+      "main": [
+        [
+          {
+            "node": "Check Limit Twilio  1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save the Initialized Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit Twilio  1": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit Twilio 2": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Used Today 2": {
+      "main": [
+        [
+          {
+            "node": "Update Queue Shift the Number One By One 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Limit Twilio 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Used Today 1": {
+      "main": [
+        [
+          {
+            "node": "Update Queue Shift the Number One By One 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Limit Twilio 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Queue Shift the Number One By One 2": {
+      "main": [
+        [
+          {
+            "node": "Send Message On Twilio 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Queue Shift the Number One By One 1": {
+      "main": [
+        [
+          {
+            "node": "Send Message On Twilio 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Limit One By One 2": {
+      "main": [
+        [
+          {
+            "node": "Row Exit 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Limit One By One 1": {
+      "main": [
+        [
+          {
+            "node": "Row Exit 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Exit 2": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Exit 1": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit Twilio 3": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Used Today 3": {
+      "main": [
+        [
+          {
+            "node": "Update Queue Shift the Number One By One 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Limit Twilio 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Queue Shift the Number One By One 3": {
+      "main": [
+        [
+          {
+            "node": "Send Message On Twilio 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Limit One By One 3": {
+      "main": [
+        [
+          {
+            "node": "Row Exit 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Exit 3": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit Twilio 4": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Queue Shift the Number One By One 4": {
+      "main": [
+        [
+          {
+            "node": "Send Message On Twilio 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Used Today 4": {
+      "main": [
+        [
+          {
+            "node": "Update Queue Shift the Number One By One 4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Limit Twilio 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Limit One By One 4": {
+      "main": [
+        [
+          {
+            "node": "Row Exit 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Exit 4": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit Twilio 5": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Used Today 5": {
+      "main": [
+        [
+          {
+            "node": "Update Queue Shift the Number One By One 5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Limit Twilio 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Queue Shift the Number One By One 5": {
+      "main": [
+        [
+          {
+            "node": "Send Message On Twilio 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Limit One By One 5": {
+      "main": [
+        [
+          {
+            "node": "Row Exit 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Exit 5": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit Twilio 6": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Used Today 6": {
+      "main": [
+        [
+          {
+            "node": "Update Queue Shift the Number One By One 6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Limit Twilio 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Queue Shift the Number One By One 6": {
+      "main": [
+        [
+          {
+            "node": "Send Message On Twilio 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Exit 6": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Limit One By One 6": {
+      "main": [
+        [
+          {
+            "node": "Row Exit 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit Twilio 7": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Used Today 7": {
+      "main": [
+        [
+          {
+            "node": "Update Queue Shift the Number One By One 7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Limit Twilio 8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Queue Shift the Number One By One 7": {
+      "main": [
+        [
+          {
+            "node": "Send Message On Twilio 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Limit One By One 7": {
+      "main": [
+        [
+          {
+            "node": "Row Exit 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Exit 7": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit Twilio 8": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Used Today 8": {
+      "main": [
+        [
+          {
+            "node": "Update Queue Shift the Number One By One 8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Limit Twilio 9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Queue Shift the Number One By One 8": {
+      "main": [
+        [
+          {
+            "node": "Send Message On Twilio 8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Limit One By One 8": {
+      "main": [
+        [
+          {
+            "node": "Row Exit 8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Exit 8": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit Twilio 9": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Used Today 9": {
+      "main": [
+        [
+          {
+            "node": "Update Queue Shift the Number One By One 9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Limit Twilio 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Queue Shift the Number One By One 9": {
+      "main": [
+        [
+          {
+            "node": "Send Message On Twilio 9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Limit One By One 9": {
+      "main": [
+        [
+          {
+            "node": "Row Exit 9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Exit 9": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Limit Twilio 10": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Used Today 10": {
+      "main": [
+        [
+          {
+            "node": "Update Queue Shift the Number One By One 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Queue Shift the Number One By One 10": {
+      "main": [
+        [
+          {
+            "node": "Send Message On Twilio 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Limit One By One 10": {
+      "main": [
+        [
+          {
+            "node": "Row Exit 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row Exit 10": {
+      "main": [
+        [
+          {
+            "node": "Limit Used Today 10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message On Twilio 1": {
+      "main": [
+        [
+          {
+            "node": "Increment Limit One By One 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message On Twilio 2": {
+      "main": [
+        [
+          {
+            "node": "Increment Limit One By One 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message On Twilio 3": {
+      "main": [
+        [
+          {
+            "node": "Increment Limit One By One 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message On Twilio 4": {
+      "main": [
+        [
+          {
+            "node": "Increment Limit One By One 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message On Twilio 5": {
+      "main": [
+        [
+          {
+            "node": "Increment Limit One By One 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message On Twilio 6": {
+      "main": [
+        [
+          {
+            "node": "Increment Limit One By One 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message On Twilio 7": {
+      "main": [
+        [
+          {
+            "node": "Increment Limit One By One 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message On Twilio 8": {
+      "main": [
+        [
+          {
+            "node": "Increment Limit One By One 8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message On Twilio 9": {
+      "main": [
+        [
+          {
+            "node": "Increment Limit One By One 9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message On Twilio 10": {
+      "main": [
+        [
+          {
+            "node": "Increment Limit One By One 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Get All Numbers from Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4185b69e-907e-4592-965a-d5fe81c6064a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e74733951e6351301a22671ce11a8f247318f3433d749386dda511e283946c74"
+  },
+  "id": "CpJLWCOXWBudcIFz",
+  "tags": []
+}
